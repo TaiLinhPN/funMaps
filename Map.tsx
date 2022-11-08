@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
-import { Float } from 'react-native/Libraries/Types/CodegenTypes';
+import MapView, {Callout, Circle, Marker, PROVIDER_GOOGLE} from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
+import {Float} from 'react-native/Libraries/Types/CodegenTypes';
 import GetLocation from 'react-native-get-location';
-
+import {Region} from 'react-native-maps';
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
@@ -19,40 +19,40 @@ const styles = StyleSheet.create({
 });
 
 const Maps = () => {
-  interface Region {
-    latitude: Float;
-    longitude: Float;
-    latitudeDelta: Float;
-    longitudeDelta: Float;
-  }
+  // interface Region {
+  //   latitude: Float;
+  //   longitude: Float;
+  //   latitudeDelta: Float;
+  //   longitudeDelta: Float;
+  // }
 
   const initialRegion: Region = {
-    latitude: 16.0639,
-    longitude: 208.2456,
+    latitude: 21.017277,
+    longitude: 105.841424,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   };
 
   const [region, setRegion] = useState<Region>(initialRegion);
 
-
-
-   GetLocation.getCurrentPosition({
-     enableHighAccuracy: true,
-     timeout: 15000,
-   })
-     .then(location => {
-      setRegion({
-        longitude: location.longitude,
-        latitude: location.latitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+  useEffect(() => {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 15000,
+    })
+      .then(location => {
+        setRegion({
+          longitude: location.longitude,
+          latitude: location.latitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        });
+      })
+      .catch(error => {
+        const {code, message} = error;
+        console.warn(code, message);
       });
-     })
-     .catch(error => {
-       const {code, message} = error;
-       console.warn(code, message);
-     });
+  }, []);
 
   const onRegionChange = (region: Region) => {
     setRegion(region);
@@ -66,12 +66,30 @@ const Maps = () => {
         provider={PROVIDER_GOOGLE} // remove if not using Google Maps
         style={styles.map}
         region={region}
-        onRegionChange={() => onRegionChange}></MapView>
+        onRegionChange={() => onRegionChange}>
+        <Marker
+          coordinate={{
+            latitude: region.latitude,
+            longitude: region.longitude,
+          }}
+          pinColor="black">
+          <Callout>
+            <Text>I'm here</Text>
+          </Callout>
+        </Marker>
+        <Circle
+          center={{
+            latitude: region.latitude,
+            longitude: region.longitude,
+          }}
+          radius={500}
+          strokeColor={'rgba(170,187,204,0.4)'}
+          strokeWidth={100}
+        />
+      </MapView>
     </View>
   );
 };
 
 export default Maps;
-function setState(arg0: {region: any}) {
-  throw new Error('Function not implemented.');
-}
+
