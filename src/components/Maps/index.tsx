@@ -1,31 +1,33 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 
-import MapView, {Callout, Circle, Marker, PROVIDER_GOOGLE} from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
+import MapView, {
+  Callout,
+  Circle,
+  Marker,
+  PROVIDER_GOOGLE,
+} from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import {Float} from 'react-native/Libraries/Types/CodegenTypes';
 import GetLocation from 'react-native-get-location';
 import {Region} from 'react-native-maps';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     height: '100%',
-    width: 400,
     justifyContent: 'flex-end',
     alignItems: 'center',
+    position: "relative",
+   
+    
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+    flex:1
   },
 });
 
 const Maps = () => {
-  // interface Region {
-  //   latitude: Float;
-  //   longitude: Float;
-  //   latitudeDelta: Float;
-  //   longitudeDelta: Float;
-  // }
-
   const initialRegion: Region = {
     latitude: 21.017277,
     longitude: 105.841424,
@@ -62,7 +64,40 @@ const Maps = () => {
 
   return (
     <View style={styles.container}>
+      <GooglePlacesAutocomplete
+        placeholder="Search"
+        onPress={(data, details = null) => {
+          // 'details' is provided when fetchDetails = true
+          console.log(data, details);
+        }}
+        query={{
+          key: 'AIzaSyAKtxHr-Xx32YorlUNJTADl3Eywse4NSM0',
+          language: 'en',
+        }}
+        styles={{
+          container: {
+            height: 100,
+            width: '70%',
+            position: 'absolute',
+            zIndex: 100,
+            top: 10,
+          },
+          listView: {
+            backgroundColor: 'white',
+            color: '#000',
+            width: '100%',
+            height: 100,
+            position: 'absolute',
+            zIndex: 100,
+            top: 50,
+          },
+        }}
+      />
+
       <MapView
+        showsUserLocation={true}
+        zoomControlEnabled={true}
+        zoomEnabled={true}
         provider={PROVIDER_GOOGLE} // remove if not using Google Maps
         style={styles.map}
         region={region}
@@ -72,7 +107,7 @@ const Maps = () => {
             latitude: region.latitude,
             longitude: region.longitude,
           }}
-          pinColor="black">
+          pinColor="red">
           <Callout>
             <Text>I'm here</Text>
           </Callout>
@@ -83,7 +118,7 @@ const Maps = () => {
             longitude: region.longitude,
           }}
           radius={500}
-          strokeColor={'rgba(170,187,204,0.4)'}
+          strokeColor={'rgba(45,137,193,0.4)'}
           strokeWidth={100}
         />
       </MapView>
@@ -92,4 +127,3 @@ const Maps = () => {
 };
 
 export default Maps;
-
